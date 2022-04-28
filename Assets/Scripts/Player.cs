@@ -49,5 +49,14 @@ public class Player : MonoBehaviour
         {
             rb.AddTorque(transform.forward * 25, ForceMode.Acceleration);
         }
+
+        foreach(GameObject booster in FloatPoints)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(booster.transform.position, Vector3.down, out hit, 5))
+            {
+                rb.AddForceAtPosition(booster.transform.up * 5, booster.transform.position, ForceMode.Acceleration);
+            }
+        }
     }
 }
