@@ -7,11 +7,14 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
+
     Rigidbody rb;
     [SerializeField] List<GameObject> FloatPoints;
+    int FloatLayers = 1 << 3;
     // Start is called before the first frame update
     void Start()
     {
+        FloatLayers = ~FloatLayers;
         rb = GetComponent<Rigidbody>();   
     }
 
@@ -53,7 +56,7 @@ public class Player : MonoBehaviour
         foreach(GameObject booster in FloatPoints)
         {
             RaycastHit hit;
-            if (Physics.Raycast(booster.transform.position, Vector3.down, out hit, 5))
+            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 5, FloatLayers))
             {
                 rb.AddForceAtPosition(booster.transform.up * 5, booster.transform.position, ForceMode.Acceleration);
             }
