@@ -66,6 +66,9 @@ public class Player : MonoBehaviour
                 {
                     rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
+            }else
+            {
+                rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
             }
         }
     }
