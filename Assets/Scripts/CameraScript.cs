@@ -4,27 +4,48 @@ using UnityEngine;
 
 public class CameraScript : MonoBehaviour
 {
-    GameObject Pivot;
+    [SerializeField] GameObject Player = null;
 
-    [SerializeField] Transform Target;
+    float Rotationspeed = 0.1f;
 
-    // Start is called before the first frame update
+    float speed = 8.0f;
+
+    float yaw = 0.0f;
+    float pitch = 0.0f;
+
+    // Use this for initialization
     void Start()
     {
-        Pivot = transform.root.gameObject;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-        if (Target)
+
+        transform.position = Player.transform.position;
+
+
+        yaw += speed * Input.GetAxis("Mouse X");
+        if (pitch < -90 - speed)
         {
-            FollowTarget();
+            pitch = -90;
         }
+        else if (pitch > 90 + speed)
+        {
+            pitch = 90;
+        }
+        else
+        {
+            pitch -= speed * Input.GetAxis("Mouse Y");
+        }
+        transform.localEulerAngles = new Vector3(pitch, yaw, 0.0f);
+        
     }
 
-    void FollowTarget()
+    public void SetRotation(Vector3 rot)
     {
-        Pivot.transform.position = Vector3.Lerp(Pivot.transform.position, Target.position, 0.5f);
+        pitch = rot.x;
+        yaw = rot.y;
     }
-
 }
