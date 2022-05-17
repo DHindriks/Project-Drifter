@@ -1056,8 +1056,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Player: {fileID: 1993775441}
-  stars: {fileID: 0}
-  target: {fileID: 0}
 --- !u!1 &1081009690
 GameObject:
   m_ObjectHideFlags: 0
@@ -2074,7 +2072,7 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.3977909
+        value: 0.24501228
         inSlope: 0
         outSlope: 0
         tangentMode: 0
