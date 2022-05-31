@@ -6,8 +6,11 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] int turnSpeed;
+    [SerializeField] int TurnSpeed;
+    [SerializeField] int MoveSpeed;
+    [SerializeField] int BoostSpeed;
 
+    bool NearGround;
     Rigidbody rb;
     [SerializeField] List<GameObject> FloatPoints;
     int FloatLayers = 1 << 3;
@@ -24,37 +27,60 @@ public class Player : MonoBehaviour
         //boost
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            rb.AddForce(transform.forward * turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddForce(transform.forward * BoostSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            rb.AddTorque(transform.up * -turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddTorque(transform.up * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
         if (Input.GetKey(KeyCode.D))
         {
-            rb.AddTorque(transform.up * turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddTorque(transform.up * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
 
         if (Input.GetKey(KeyCode.W))
         {
-            rb.AddTorque(transform.right * -turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            if (NearGround)
+            {
+                rb.AddForce(transform.forward * MoveSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
+            else
+            {
+                rb.AddTorque(transform.right * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.AddTorque(transform.right * turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddTorque(transform.right * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
 
         if (Input.GetKey(KeyCode.Q))
         {
-            rb.AddTorque(transform.forward * -turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddTorque(transform.forward * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
         if (Input.GetKey(KeyCode.E))
         {
-            rb.AddTorque(transform.forward * turnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            rb.AddTorque(transform.forward * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
         }
 
-        foreach(GameObject booster in FloatPoints)
+        FloatCraft();
+
+    }
+
+    void FloatCraft()
+    {
+        NearGround = false;
+        foreach (GameObject booster in FloatPoints)
+        {
+            RaycastHit GroundCheck;
+            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out GroundCheck, 10, FloatLayers))
+            {
+                NearGround = true;
+            }
+        }
+
+        foreach (GameObject booster in FloatPoints)
         {
             RaycastHit hit;
             if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 10, FloatLayers))
@@ -62,11 +88,13 @@ public class Player : MonoBehaviour
                 if (hit.distance <= 5)
                 {
                     rb.AddForceAtPosition(booster.transform.up * 500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
-                }else if (hit.distance > 5)
+                }
+                else if (hit.distance > 5)
                 {
                     rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
-            }else
+            }
+            else if (NearGround)
             {
                 rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
             }
