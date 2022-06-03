@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] int BoostSpeed;
 
     bool NearGround;
+    bool Boosting;
     Rigidbody rb;
     [SerializeField] List<GameObject> FloatPoints;
     int FloatLayers = 1 << 3;
@@ -28,6 +29,9 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
         {
             rb.AddForce(transform.forward * BoostSpeed * Time.deltaTime, ForceMode.Acceleration);
+            Boosting = true;
+        }else if(Input.GetKeyUp(KeyCode.LeftShift)) {
+            Boosting = false;
         }
 
         if (Input.GetKey(KeyCode.A))
@@ -52,16 +56,37 @@ public class Player : MonoBehaviour
         }
         if (Input.GetKey(KeyCode.S))
         {
-            rb.AddTorque(transform.right * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            if (NearGround)
+            {
+                rb.AddForce(-transform.forward * MoveSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
+            else
+            {
+                rb.AddTorque(transform.right * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
         }
 
         if (Input.GetKey(KeyCode.Q))
         {
-            rb.AddTorque(transform.forward * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            if (NearGround)
+            {
+                rb.AddForce(-transform.right * MoveSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
+            else
+            {
+                rb.AddTorque(transform.forward * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
         }
         if (Input.GetKey(KeyCode.E))
         {
-            rb.AddTorque(transform.forward * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            if (NearGround)
+            {
+                rb.AddForce(transform.right * MoveSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
+            else
+            {
+                rb.AddTorque(transform.forward * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+            }
         }
 
         FloatCraft();
@@ -94,7 +119,7 @@ public class Player : MonoBehaviour
                     rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
             }
-            else if (NearGround)
+            else if (NearGround && !Boosting)
             {
                 rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
             }
