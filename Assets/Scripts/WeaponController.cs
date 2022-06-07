@@ -17,19 +17,19 @@ public class WeaponController : MonoBehaviour
     void Update()
     {
         RaycastHit hit;
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity, FloatLayers))
+        //if (Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, Mathf.Infinity, FloatLayers))
+        //{
+        //    foreach (WeaponBase weapon in EquippedWeapons)
+        //    {
+        //        weapon.transform.LookAt(hit.point);
+        //    }
+        //}
+        
+        foreach (WeaponBase weapon in EquippedWeapons)
         {
-            foreach (WeaponBase weapon in EquippedWeapons)
-            {
-                weapon.transform.LookAt(hit.point);
-            }
-        }else
-        {
-            foreach (WeaponBase weapon in EquippedWeapons)
-            {
-                weapon.transform.LookAt(cam.transform.position + cam.transform.forward * 100);
-            }
+            weapon.transform.LookAt(cam.transform.position + cam.transform.forward * 100);
         }
+        
 
     }
 }
