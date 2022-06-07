@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
-    [SerializeField] Camera cam;
+    [SerializeField] GameObject cam;
     [SerializeField] List<WeaponBase> EquippedWeapons;
     int FloatLayers = 1 << 3;
 
@@ -22,6 +22,12 @@ public class WeaponController : MonoBehaviour
             foreach (WeaponBase weapon in EquippedWeapons)
             {
                 weapon.transform.LookAt(hit.point);
+            }
+        }else
+        {
+            foreach (WeaponBase weapon in EquippedWeapons)
+            {
+                weapon.transform.LookAt(cam.transform.position + cam.transform.forward * 100);
             }
         }
 
