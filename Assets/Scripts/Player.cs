@@ -77,7 +77,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                rb.AddTorque(transform.forward * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.forward * -TurnSpeed * 2 * Time.deltaTime, ForceMode.Acceleration);
             }
         }
         if (Input.GetKey(KeyCode.E))
@@ -88,7 +88,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                rb.AddTorque(transform.forward * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.forward * TurnSpeed * 2 * Time.deltaTime, ForceMode.Acceleration);
             }
         }
 
@@ -121,7 +121,7 @@ public class Player : MonoBehaviour
                 }
                 else if (hit.distance > 5)
                 {
-                    rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
+                    rb.AddForceAtPosition(booster.transform.up * -1000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
             }
             else if (NearGround && !Boosting)
