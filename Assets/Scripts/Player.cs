@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField] int TurnSpeed;
     [SerializeField] int MoveSpeed;
     [SerializeField] int BoostSpeed;
+    [SerializeField] float MaxBoost;
+    public float boostAmount;
 
     bool NearGround;
     bool Boosting;
@@ -26,10 +28,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         //boost
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && boostAmount > 0)
         {
             rb.AddForce(transform.forward * BoostSpeed * Time.deltaTime, ForceMode.Acceleration);
             Boosting = true;
+            boostAmount -= Time.deltaTime;
         }else if(Input.GetKeyUp(KeyCode.LeftShift)) {
             Boosting = false;
         }
@@ -102,6 +105,8 @@ public class Player : MonoBehaviour
             if (Physics.Raycast(booster.transform.position, -booster.transform.up, out GroundCheck, 10, FloatLayers))
             {
                 NearGround = true;
+                boostAmount += Time.deltaTime;
+                boostAmount = Mathf.Clamp(boostAmount, 0, MaxBoost);
             }
         }
 
@@ -121,7 +126,7 @@ public class Player : MonoBehaviour
             }
             else if (NearGround && !Boosting)
             {
-                rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
+                rb.AddForceAtPosition(booster.transform.up * -5000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
             }
         }
     }
