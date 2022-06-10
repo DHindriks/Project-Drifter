@@ -9,6 +9,8 @@ public class Player : MonoBehaviour
     [SerializeField] int TurnSpeed;
     [SerializeField] int MoveSpeed;
     [SerializeField] int BoostSpeed;
+    [SerializeField] float MaxBoost;
+    public float boostAmount;
 
     bool NearGround;
     bool Boosting;
@@ -26,10 +28,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         //boost
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && boostAmount > 0)
         {
             rb.AddForce(transform.forward * BoostSpeed * Time.deltaTime, ForceMode.Acceleration);
             Boosting = true;
+            boostAmount -= Time.deltaTime;
         }else if(Input.GetKeyUp(KeyCode.LeftShift)) {
             Boosting = false;
         }
@@ -74,7 +77,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                rb.AddTorque(transform.forward * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.forward * -TurnSpeed * 2 * Time.deltaTime, ForceMode.Acceleration);
             }
         }
         if (Input.GetKey(KeyCode.E))
@@ -85,7 +88,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                rb.AddTorque(transform.forward * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.forward * TurnSpeed * 2 * Time.deltaTime, ForceMode.Acceleration);
             }
         }
 
@@ -102,13 +105,14 @@ public class Player : MonoBehaviour
             if (Physics.Raycast(booster.transform.position, -booster.transform.up, out GroundCheck, 10, FloatLayers))
             {
                 NearGround = true;
+                boostAmount += Time.deltaTime;
+                boostAmount = Mathf.Clamp(boostAmount, 0, MaxBoost);
             }
         }
 
         foreach (GameObject booster in FloatPoints)
         {
             RaycastHit hit;
-            ParticleSystem Dust = booster.GetComponentInChildren<ParticleSystem>();
             if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 10, FloatLayers))
             {
                 if (hit.distance <= 5)
@@ -117,18 +121,12 @@ public class Player : MonoBehaviour
                 }
                 else if (hit.distance > 5)
                 {
-                    rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
+                    rb.AddForceAtPosition(booster.transform.up * -1000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
-                Dust.Play();
-                Dust.transform.position = hit.point;
-                Dust.transform.Rotate(hit.normal);
             }
             else if (NearGround && !Boosting)
             {
-                rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
-            }else if (!NearGround)
-            {
-                Dust.Stop();
+                rb.AddForceAtPosition(booster.transform.up * -5000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
             }
         }
     }
