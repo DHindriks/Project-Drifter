@@ -108,6 +108,7 @@ public class Player : MonoBehaviour
         foreach (GameObject booster in FloatPoints)
         {
             RaycastHit hit;
+            ParticleSystem Dust = booster.GetComponentInChildren<ParticleSystem>();
             if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 10, FloatLayers))
             {
                 if (hit.distance <= 5)
@@ -118,10 +119,16 @@ public class Player : MonoBehaviour
                 {
                     rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
+                Dust.Play();
+                Dust.transform.position = hit.point;
+                Dust.transform.Rotate(hit.normal);
             }
             else if (NearGround && !Boosting)
             {
                 rb.AddForceAtPosition(booster.transform.up * -500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
+            }else if (!NearGround)
+            {
+                Dust.Stop();
             }
         }
     }
