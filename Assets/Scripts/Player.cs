@@ -16,11 +16,10 @@ public class Player : MonoBehaviour
     bool Boosting;
     Rigidbody rb;
     [SerializeField] List<GameObject> FloatPoints;
-    int FloatLayers = 1 << 3;
+    [SerializeField] LayerMask FloatLayers;
     // Start is called before the first frame update
     void Start()
     {
-        FloatLayers = ~FloatLayers;
         rb = GetComponent<Rigidbody>();   
     }
 

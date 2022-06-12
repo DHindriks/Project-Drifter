@@ -433,11 +433,16 @@ MonoBehaviour:
   TurnSpeed: 2000
   MoveSpeed: 400
   BoostSpeed: 1200
+  MaxBoost: 0
+  boostAmount: 0
   FloatPoints:
   - {fileID: 7190871741733505145}
   - {fileID: 7190871743179897458}
   - {fileID: 7190871742105001670}
   - {fileID: 7190871741577965617}
+  FloatLayers:
+    serializedVersion: 2
+    m_Bits: 51
 --- !u!96 &7190871741796213124
 TrailRenderer:
   serializedVersion: 2
