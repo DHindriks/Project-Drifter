@@ -6,6 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
+    [SerializeField] Transform ResetPos;
+
     [SerializeField] int TurnSpeed;
     [SerializeField] int MoveSpeed;
     [SerializeField] int BoostSpeed;
@@ -13,6 +15,7 @@ public class Player : MonoBehaviour
     public float boostAmount;
 
     bool NearGround;
+    bool WkeyRepressed;
     bool Boosting;
     Rigidbody rb;
     [SerializeField] List<GameObject> FloatPoints;
@@ -26,6 +29,16 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            WkeyRepressed = true;
+        }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            transform.position = ResetPos.position;
+        }
+
         //boost
         if (Input.GetKey(KeyCode.LeftShift) && boostAmount > 0)
         {
@@ -51,9 +64,9 @@ public class Player : MonoBehaviour
             {
                 rb.AddForce(transform.forward * MoveSpeed * Time.deltaTime, ForceMode.Acceleration);
             }
-            else
+            else if (WkeyRepressed)
             {
-                rb.AddTorque(transform.right * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.right * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
             }
         }
         if (Input.GetKey(KeyCode.S))
@@ -64,7 +77,7 @@ public class Player : MonoBehaviour
             }
             else
             {
-                rb.AddTorque(transform.right * TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
+                rb.AddTorque(transform.right * -TurnSpeed * Time.deltaTime, ForceMode.Acceleration);
             }
         }
 
@@ -101,31 +114,49 @@ public class Player : MonoBehaviour
         foreach (GameObject booster in FloatPoints)
         {
             RaycastHit GroundCheck;
-            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out GroundCheck, 10, FloatLayers))
+            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out GroundCheck, 14, FloatLayers))
             {
                 NearGround = true;
                 boostAmount += Time.deltaTime;
                 boostAmount = Mathf.Clamp(boostAmount, 0, MaxBoost);
+                break; 
             }
+
+        }
+
+        if (NearGround)
+        {
+            WkeyRepressed = false;
         }
 
         foreach (GameObject booster in FloatPoints)
         {
             RaycastHit hit;
-            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 10, FloatLayers))
+            ParticleSystem particles = booster.GetComponentInChildren<ParticleSystem>();
+
+            if (Physics.Raycast(booster.transform.position, -booster.transform.up, out hit, 14, FloatLayers))
             {
-                if (hit.distance <= 5)
+
+                particles.transform.position = hit.point;
+                particles.transform.rotation = Quaternion.LookRotation(transform.TransformDirection(Vector3.forward), hit.normal);
+                particles.Play();
+
+                if (hit.distance <= 7)
                 {
                     rb.AddForceAtPosition(booster.transform.up * 500 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
-                else if (hit.distance > 5)
+                else if (hit.distance > 7)
                 {
                     rb.AddForceAtPosition(booster.transform.up * -1000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
                 }
+
             }
             else if (NearGround && !Boosting)
             {
                 rb.AddForceAtPosition(booster.transform.up * -5000 * Time.deltaTime, booster.transform.position, ForceMode.Acceleration);
+            }else
+            {
+                particles.Stop();
             }
         }
     }
