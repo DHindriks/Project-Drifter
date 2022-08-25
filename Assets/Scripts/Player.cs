@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] int TurnSpeed;
     [SerializeField] int MoveSpeed;
     [SerializeField] int BoostSpeed;
+    [SerializeField] ParticleSystem BoostPart;
     [SerializeField] float MaxBoost;
     public float boostAmount;
 
@@ -45,7 +46,12 @@ public class Player : MonoBehaviour
             rb.AddForce(transform.forward * BoostSpeed * Time.deltaTime, ForceMode.Acceleration);
             Boosting = true;
             boostAmount -= Time.deltaTime;
-        }else if(Input.GetKeyUp(KeyCode.LeftShift)) {
+            if (!BoostPart.isEmitting)
+            {
+                BoostPart.Play();
+            }
+        }else if(Input.GetKeyUp(KeyCode.LeftShift) || boostAmount <= 0) {
+            BoostPart.Stop();
             Boosting = false;
         }
 
